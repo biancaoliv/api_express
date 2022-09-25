@@ -2,6 +2,7 @@ const express = require("express");
 const UserRouter = require("./routers/user.router");
 const dotenv = require("dotenv");
 const connectToDatabase = require("./src/database/connect");
+const authConfig = require("./middlewares/auth")
 dotenv.config();
 
 connectToDatabase();

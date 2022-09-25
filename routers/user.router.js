@@ -15,7 +15,7 @@ userRouter.get("/views/users", async (req, res) => {
 
 userRouter.get("/home", (req, res) => {
   res.contentType("application/html");
-  res.status(200).send("<h1>hello world</h1>");
+  res.status(200).send("<h1>Home page/h1>");
 });
 
 function generateToken(params = {}) {
