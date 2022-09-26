@@ -81,7 +81,7 @@ userRouter.post("/users", async (req, res) => {
 
 ```
 ---
-- finds all users registered in the database
+📙 finds all users registered in the database
 ```
 userRouter.get("/users", async (req, res) => {
   try {
