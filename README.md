@@ -4,6 +4,12 @@
 
 # API: User registration
 
+# Index
+- [About](#-About)
+- [Technologies used](#-Technologies-used)
+- [How to download the project](#-How-to-download-the-project)
+- [How does the api work?](#-How-does-the-api-work?)
+
 ## 🔖 About
 
 Project of an **API** created to put into practice all my acquired knowledge.
@@ -42,3 +48,71 @@ The project was developed using the following technologies:
 ## How does the api work?
 ---
 
+📕 Initially, the home page was created using the local server.
+```
+userRouter.get("/home", (req, res) => {
+  res.contentType("application/html");
+  res.status(200).send("<h1>Home page/h1>");
+});
+```
+---
+📗  In this route, users are created and email validation is performed. At this point we have also generated a token.
+
+```
+userRouter.post("/users", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    if (await UserModel.findOne({ email }))
+      return res.status(400).send({ error: "User already exists" });
+
+    const user = await UserModel.create(req.body);
+
+    user.password = undefined;
+
+    return res.send({
+      user,
+      token: generateToken({ id: user.id }),
+    });
+  } catch (error) {
+    return res.status(400).send({ error: "Registration failed" });
+  }
+});
+
+```
+---
+- finds all users registered in the database
+```
+userRouter.get("/users", async (req, res) => {
+  try {
+    const users = await UserModel.find({});
+
+    res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+});
+```
+---
+📘 Email and password authentication route, also having a token.
+```
+userRouter.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await UserModel.findOne({ email }).select("+password");
+
+  if (!user) return res.status(400).send({ error: "User not found" });
+
+  if (!(await bcrypt.compare(password, user.password)))
+    return res.status(400).send({ error: "Invalid password" });
+
+  user.password = undefined;
+
+  res.send({
+    user,
+    token: generateToken({ id: user.id }),
+  });
+});
+
+```
+💻 Developed by: Bianca Oliveira

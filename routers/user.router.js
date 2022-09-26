@@ -7,12 +7,6 @@ const jwt = require("jsonwebtoken");
 
 const authConfig = require("../src/config/auth");
 
-userRouter.get("/views/users", async (req, res) => {
-  const users = await UserModel.find({});
-
-  res.render("index", { users });
-});
-
 userRouter.get("/home", (req, res) => {
   res.contentType("application/html");
   res.status(200).send("<h1>Home page/h1>");
