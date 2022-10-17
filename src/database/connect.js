@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const connectToDatabase = async () => {
   await mongoose.connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@apiexpress.gcbasqz.mongodb.net/database?retryWrites=true&w=majority`,
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@apiexpress.gcbasqz.mongodb.net/?retryWrites=true&w=majority`,
     (error) => {
       if (error) {
         return console.log(
