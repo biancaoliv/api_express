@@ -4,6 +4,7 @@ const UserModel = require("../src/models/user.model");
 const bcrypt = require("bcrypt");
 const userRouter = Router();
 const jwt = require("jsonwebtoken");
+const client = require("../redisConfig");
 
 const authConfig = require("../src/config/auth");
 
@@ -40,9 +41,14 @@ userRouter.post("/users", async (req, res) => {
 
 userRouter.get("/users", async (req, res) => {
   try {
+    const cachedUsers = await client.get("users")
+    if(cachedUsers) {
+      return res.status(200).json({cached: true,
+        data: cachedUsers});
+    }
     const users = await UserModel.find({});
-
-    res.status(200).json(users);
+    client.set("users", JSON.stringify(users))
+    res.status(200).json({cached: false, data: users});
   } catch (error) {
     return res.status(500).send(error.message);
   }
