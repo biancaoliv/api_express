@@ -24,6 +24,7 @@ The project was developed using the following technologies:
 - [JavaScript](https://www.javascript.com)
 - [Node](https://nodejs.org/en/)
 - [Express](https://expressjs.com/pt-br/)
+- [Redis](https://redis.io/)
 
 ---
 
@@ -38,7 +39,7 @@ The project was developed using the following technologies:
     $ cd api_express
 
     # install the dependencies
-    $ git install
+    $ npm install
 
     # start the project
     $ npm run start
@@ -81,13 +82,18 @@ userRouter.post("/users", async (req, res) => {
 
 ```
 ---
-📙 finds all users registered in the database
+📙 finds all users registered in the database with Redis
 ```
 userRouter.get("/users", async (req, res) => {
   try {
+    const cachedUsers = await client.get("users")
+    if(cachedUsers) {
+      return res.status(200).json({cached: true,
+        data: cachedUsers});
+    }
     const users = await UserModel.find({});
-
-    res.status(200).json(users);
+    client.set("users", JSON.stringify(users))
+    res.status(200).json({cached: false, data: users});
   } catch (error) {
     return res.status(500).send(error.message);
   }
